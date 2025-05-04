@@ -1,0 +1,5 @@
+pytest>=8.2
+coverage>=7.5.4
+pytest-cov>=5.0
+pylint>=3.2.5
+flake8>=7.1
