@@ -1,5 +1,6 @@
 """Module partitions.py"""
 import typing
+import datetime
 
 
 class Partitions(typing.NamedTuple):
@@ -10,14 +11,14 @@ class Partitions(typing.NamedTuple):
     ----------<br>
     <b>uri</b>: str<br>
         A uniform resource locator.<br><br>
-    <b>prefix</b>: str<br>
-        An Amazon S3 (Simple Storage Service) prefix.<br><br>
     <b>catchment_id</b>: int<br>
         The identification code of a catchment area.<br><br>
     <b>ts_id</b>: int<br>
         The identification code of a time series.<br><br>
+    <b>date</b>: str<br>
+        A ...<br><br>
     """
     uri: str
-    prefix: str
     catchment_id: int
     ts_id: int
+    date: datetime.datetime
