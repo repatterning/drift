@@ -23,6 +23,7 @@ class Config:
 
         # Template
         self.s3_parameters_key = 's3_parameters.yaml'
+        self.arguments_key = 'drift/arguments.json'
         self.metadata_ = 'external/metadata/drift'
 
         # The prefix of the Amazon repository where the quantiles will be stored
