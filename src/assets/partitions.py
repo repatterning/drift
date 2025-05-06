@@ -1,4 +1,6 @@
 """Module partitions.py"""
+import logging
+import datetime
 import numpy as np
 import pandas as pd
 
@@ -18,11 +20,35 @@ class Partitions:
         self.__data = data
         self.__arguments = arguments
 
+    def __limits(self):
+        """
+
+        :return:
+        """
+
+        # The boundaries of the dates; datetime format
+        spanning = self.__arguments.get('spanning')
+        as_from = datetime.date.today() - datetime.timedelta(days=round(spanning*365))
+        starting = datetime.datetime.strptime(f'{as_from.year}-01-01', '%Y-%m-%d')
+
+        _end = datetime.datetime.now().year
+        ending = datetime.datetime.strptime(f'{_end}-01-01', '%Y-%m-%d')
+
+        # Create series
+        frame = pd.date_range(start=starting, end=ending, freq='YS'
+                              ).to_frame(index=False, name='date')
+
+        return frame
+
     def exc(self) -> pd.DataFrame:
         """
 
         :return:
         """
+
+        limits = self.__limits()
+        limits.info()
+        logging.info(limits)
 
         codes = np.array(self.__arguments.get('excerpt'))
         codes = np.unique(codes)
