@@ -1,4 +1,5 @@
 """Module interface.py"""
+import logging
 import typing
 
 import pandas as pd
@@ -58,6 +59,7 @@ class Interface:
         # Strings for data reading.  If self.__arguments.get('reacquire') is False, the partitions will be those
         # of excerpt ...
         partitions = src.assets.partitions.Partitions(data=gauges, arguments=self.__arguments).exc()
+        logging.info(partitions)
 
         # The reference sheet of gauges.  Each instance encodes the attributes of a gauge.
         reference = src.assets.reference.Reference(
