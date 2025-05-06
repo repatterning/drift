@@ -30,7 +30,7 @@ class Gauges:
             bucket_name=self.__s3_parameters._asdict()[arguments['s3']['p_bucket']])
 
     @staticmethod
-    def __get_elements(objects: list[str], prefixes: list[str]) -> pd.DataFrame:
+    def __get_elements(objects: list[str]) -> pd.DataFrame:
         """
 
         :param objects:
@@ -38,21 +38,23 @@ class Gauges:
         """
 
         # A set of S3 uniform resource locators
-        strings = [i.rsplit('/', 1)[0] for i in objects]
-        values = pd.DataFrame(data={'uri': objects, 'prefix': prefixes, 'string': strings})
+        values = pd.DataFrame(data={'uri': objects})
 
         # Splitting locators
-        rename = {0: 'endpoint', 1: 'catchment_id', 2: 'ts_id'}
-        splittings = values['string'].str.rsplit('/', n=2, expand=True)
+        rename = {0: 'endpoint', 1: 'catchment_id', 2: 'ts_id', 3: 'name'}
+        splittings = values['uri'].str.rsplit('/', n=3, expand=True)
         splittings.rename(columns=rename, inplace=True)
+        splittings['date'] = splittings['name'].str.replace('.csv', '')
 
         # Collating
         values = values.copy().join(splittings, how='left')
 
         return values
 
-    def __get_prefixes(self) -> list[str]:
+    def __get_keys(self) -> list[str]:
         """
+        cf. self.__pre.objects(prefix=paths[0], delimiter=''),
+        self.__pre.objects(prefix=paths[0], delimiter='/')
 
         :return:
         """
@@ -64,11 +66,11 @@ class Gauges:
 
         computations = []
         for path in paths:
-            listings = self.__pre.objects(prefix=path, delimiter='/')
+            listings = self.__pre.objects(prefix=path, delimiter='')
             computations.append(listings)
-        prefixes: list[str] = sum(computations, [])
+        keys: list[str] = sum(computations, [])
 
-        return prefixes
+        return keys
 
     def exc(self) -> pd.DataFrame:
         """
@@ -76,19 +78,20 @@ class Gauges:
         :return:
         """
 
-        prefixes = self.__get_prefixes()
-        if len(prefixes) > 0:
-            objects = [f's3://{self.__s3_parameters.internal}/{prefix}' for prefix in prefixes]
+        keys = self.__get_keys()
+        if len(keys) > 0:
+            objects = [f's3://{self.__s3_parameters.internal}/{key}' for key in keys]
         else:
             return pd.DataFrame()
 
         # The variable objects is a list of uniform resource locators.  Each locator includes a 'ts_id',
         # 'catchment_id', 'datestr' substring; the function __get_elements extracts these items.
-        values = self.__get_elements(objects=objects, prefixes=prefixes)
+        values = self.__get_elements(objects=objects)
 
         # Types
         values['catchment_id'] = values['catchment_id'].astype(dtype=np.int64)
         values['ts_id'] = values['ts_id'].astype(dtype=np.int64)
-        values.drop(columns=['endpoint', 'string'], inplace=True)
+        values['date'] = pd.to_datetime(values['date'], format='%Y-%m-%d')
+        values.drop(columns=['endpoint', 'name'], inplace=True)
 
         return values
