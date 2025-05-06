@@ -60,7 +60,7 @@ class Interface:
 
         # The strings for transferring data to Amazon S3 (Simple Storage Service)
         strings = self.__dictionary.exc(
-            path=os.path.join(os.getcwd(), 'warehouse', 'drift'),
+            path=self.__configurations.drift_,
             extension='json', prefix=self.__configurations.prefix + '/')
 
         # Adding metadata details per instance
