@@ -18,16 +18,17 @@ class Persist:
     Structures and saves each gauge's drift data.
     """
 
-    def __init__(self, reference: pd.DataFrame, arguments: dict):
+    def __init__(self, arguments: dict, reference: pd.DataFrame):
         """
         Beware, .to_json() will automatically convert the values of a datetime64[] field
         to milliseconds epoch, therefore <milliseconds> ≡ <date>
 
+        :param arguments: The arguments.
         :param reference: A reference of gauges, and their attributes.
         """
 
-        self.__reference = reference
         self.__arguments = arguments
+        self.__reference = reference
 
         self.__fields = ['milliseconds', 'js', 'wasserstein']
 
