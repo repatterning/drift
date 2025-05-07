@@ -55,7 +55,7 @@ class Interface:
         __data = dask.delayed(src.algorithms.data.Data(arguments=self.__arguments).exc)
         __hankel = dask.delayed(src.algorithms.hankel.Hankel(arguments=self.__arguments).exc)
         __metrics = dask.delayed(src.algorithms.metrics.Metrics(arguments=self.__arguments).exc)
-        __persist = dask.delayed(src.algorithms.persist.Persist(reference=reference).exc)
+        __persist = dask.delayed(src.algorithms.persist.Persist(reference=reference, arguments=self.__arguments).exc)
 
         # Compute
         computations = []
