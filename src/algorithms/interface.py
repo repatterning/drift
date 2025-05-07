@@ -4,7 +4,6 @@ import logging
 import dask
 import pandas as pd
 
-import config
 import src.algorithms.data
 import src.algorithms.hankel
 import src.algorithms.metrics
@@ -28,9 +27,6 @@ class Interface:
 
         self.__listings = listings
         self.__arguments = arguments
-
-        # Instances
-        self.__configurations = config.Config()
 
     @dask.delayed
     def __get_listing(self, ts_id: int) -> list[str]:
