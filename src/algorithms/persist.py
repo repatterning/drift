@@ -59,7 +59,7 @@ class Persist:
         """
 
         # Ascertain date order
-        # metrics.sort_values(by='date', ascending=True, ignore_index=True, inplace=True)
+        metrics.sort_values(by='date', ascending=True, ignore_index=True, inplace=True)
 
         # Dictionary
         nodes = self.__get_nodes(frame=metrics, ts_id=partition.ts_id)
