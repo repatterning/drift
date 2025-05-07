@@ -18,7 +18,7 @@ class Persist:
     Structures and saves each gauge's drift data.
     """
 
-    def __init__(self, reference: pd.DataFrame):
+    def __init__(self, reference: pd.DataFrame, arguments: dict):
         """
         Beware, .to_json() will automatically convert the values of a datetime64[] field
         to milliseconds epoch, therefore <milliseconds> ≡ <date>
@@ -27,6 +27,7 @@ class Persist:
         """
 
         self.__reference = reference
+        self.__arguments = arguments
 
         self.__fields = ['milliseconds', 'js', 'wasserstein']
 
@@ -47,6 +48,9 @@ class Persist:
         string: str = frame[self.__fields].to_json(orient='split')
         nodes: dict = json.loads(string)
         nodes.update(attributes.to_dict())
+
+        nodes['drift_season_length'] = self.__arguments.get('seasons')
+        nodes['drift_season_granularity'] = self.__configurations.granularity[self.__arguments.get('frequency')]
 
         return nodes
 
