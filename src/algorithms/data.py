@@ -17,16 +17,12 @@ class Data:
         :param arguments: A set of arguments vis-à-vis calculation & storage objectives.
         """
 
-        self.__arguments = arguments
-
         # Focus
         self.__dtype = {'timestamp': np.float64, 'ts_id': np.float64, 'measure': float}
 
-        # The boundaries of the dates; datetime format
-        spanning = arguments.get('spanning')
-
         # seconds, milliseconds
-        as_from: datetime.datetime = datetime.datetime.now() - datetime.timedelta(days=round(spanning*365))
+        as_from: datetime.datetime = (datetime.datetime.now()
+                                      - datetime.timedelta(days=round(arguments.get('spanning')*365)))
         self.__as_from = as_from.timestamp() * 1000
 
     def __get_data(self, listing: list[str]):
@@ -37,7 +33,8 @@ class Data:
         """
 
         try:
-            block: pd.DataFrame = ddf.read_csv(listing, header=0, usecols=['timestamp', 'ts_id', 'measure'], dtype=self.__dtype).compute()
+            block: pd.DataFrame = ddf.read_csv(
+                listing, header=0, usecols=list(self.__dtype.keys()), dtype=self.__dtype).compute()
         except ImportError as err:
             raise err from err
 
