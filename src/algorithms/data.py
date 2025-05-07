@@ -1,14 +1,10 @@
 """Module data.py"""
-import logging
 import datetime
+import logging
 
 import dask.dataframe as ddf
-
 import numpy as np
-import src.elements.partitions as pr
-import src.elements.s3_parameters as s3p
-import src.elements.service as sr
-import src.s3.prefix
+import pandas as pd
 
 
 class Data:
@@ -16,17 +12,12 @@ class Data:
     Data
     """
 
-    def __init__(self, service: sr.Service, s3_parameters: s3p.S3Parameters, arguments: dict):
+    def __init__(self, arguments: dict):
         """
 
-        :param service: A suite of services for interacting with Amazon Web Services.
-        :param s3_parameters: The overarching S3 parameters settings of this
-                              project, e.g., region code name, buckets, etc.
         :param arguments: A set of arguments vis-à-vis calculation & storage objectives.
         """
 
-        self.__service = service
-        self.__s3_parameters = s3_parameters
         self.__arguments = arguments
 
         # Focus
@@ -34,27 +25,27 @@ class Data:
 
         # The boundaries of the dates; datetime format
         spanning = arguments.get('spanning')
-        self.__as_from = datetime.datetime.now() - datetime.timedelta(days=round(spanning*365))
 
-        '''
-        # An instance for interacting with objects within an Amazon S3 prefix
-        self.__bucket_name = self.__s3_parameters._asdict()[self.__arguments['s3']['p_bucket']]
-        self.__pre = src.s3.prefix.Prefix(service=self.__service, bucket_name=self.__bucket_name)
-        '''
+        # seconds, milliseconds
+        as_from: datetime.datetime = datetime.datetime.now() - datetime.timedelta(days=round(spanning*365))
+        self.__as_from = as_from.timestamp() * 1000
 
-    def exc(self, partition: pr.Partitions):
+    def exc(self, listing: list[str]):
         """
 
-        :param partition: Refer to src.elements.partitions
+        :param listing:
         :return:
         """
 
-        block = ddf.read_csv(partition.uri + '*.csv', header=0, usecols=['timestamp', 'ts_id', 'measure'], dtype=self.__dtype).compute()
-        logging.info(self.__as_from.timestamp())
-        logging.info(self.__as_from.date())
+        block: pd.DataFrame = ddf.read_csv(listing, header=0, usecols=['timestamp', 'ts_id', 'measure'], dtype=self.__dtype).compute()
+        block.reset_index(drop=True, inplace=True)
         block.info()
-        logging.info(block)
-        logging.info(block.loc[block['timestamp'] >= self.__as_from.timestamp(), :])
+        block = block.copy().loc[block['timestamp'] >= self.__as_from, :]
+        block.info()
+        block['timestamp'] =  pd.to_datetime(block['timestamp'], unit='ms')
+        block.info()
+        block['date'] = block['timestamp'].dt.date
+        block.info()
 
         '''
         listings = self.__pre.objects(prefix=partition.prefix.rstrip('/'))
