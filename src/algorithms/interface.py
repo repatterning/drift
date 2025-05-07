@@ -59,7 +59,7 @@ class Interface:
 
         # Compute
         computations = []
-        for partition in partitions[:2]:
+        for partition in partitions:
             listing = self.__get_listing(ts_id=partition.ts_id)
             data = __data(listing=listing)
             hankel = __hankel(data=data)
