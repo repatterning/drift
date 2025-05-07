@@ -19,7 +19,7 @@ def main():
     # The time series partitions, the reference sheet of gauges
     partitions, reference = src.assets.interface.Interface(
         service=service, s3_parameters=s3_parameters, arguments=arguments).exc()
-    logger.info(partitions[:5])
+    logger.info(partitions)
     logger.info(reference)
 
     # Experiment
