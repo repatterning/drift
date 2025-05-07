@@ -30,6 +30,22 @@ class Data:
         as_from: datetime.datetime = datetime.datetime.now() - datetime.timedelta(days=round(spanning*365))
         self.__as_from = as_from.timestamp() * 1000
 
+    def __get_data(self, listing: list[str]):
+        """
+        
+        :param listing:
+        :return:
+        """
+
+        try:
+            block: pd.DataFrame = ddf.read_csv(listing, header=0, usecols=['timestamp', 'ts_id', 'measure'], dtype=self.__dtype).compute()
+        except ImportError as err:
+            raise err from err
+
+        block.reset_index(drop=True, inplace=True)
+
+        return block
+
     def exc(self, listing: list[str]):
         """
 
@@ -37,23 +53,9 @@ class Data:
         :return:
         """
 
-        block: pd.DataFrame = ddf.read_csv(listing, header=0, usecols=['timestamp', 'ts_id', 'measure'], dtype=self.__dtype).compute()
-        block.reset_index(drop=True, inplace=True)
-        block.info()
+        block = self.__get_data(listing=listing)
         block = block.copy().loc[block['timestamp'] >= self.__as_from, :]
         block.info()
-        block['timestamp'] =  pd.to_datetime(block['timestamp'], unit='ms')
+        block['date'] = pd.to_datetime(block['timestamp'], unit='ms')
         block.info()
-        block['date'] = block['timestamp'].dt.date
-        block.info()
-
-        '''
-        listings = self.__pre.objects(prefix=partition.prefix.rstrip('/'))
-        keys = [f's3://{self.__bucket_name}/{listing}' for listing in listings]
-        
-        blocks = [cudf.read_csv(filepath_or_buffer=key, header=0, usecols=['timestamp', 'ts_id', 'measure']) for key in keys]
-        block = cudf.concat(blocks)
-        block['datestr'] = cudf.to_datetime(block['timestamp'], unit='ms')
-        block['date'] = block['datestr'].dt.strftime('%Y-%m-%d')
-        block['date'] = cudf.to_datetime(block['date'])
-        '''
+        logging.info(block)
