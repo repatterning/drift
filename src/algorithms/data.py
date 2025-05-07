@@ -1,6 +1,5 @@
 """Module data.py"""
 import datetime
-import logging
 
 import dask.dataframe as ddf
 import numpy as np
@@ -32,7 +31,7 @@ class Data:
 
     def __get_data(self, listing: list[str]):
         """
-        
+
         :param listing:
         :return:
         """
@@ -46,16 +45,20 @@ class Data:
 
         return block
 
-    def exc(self, listing: list[str]):
+    def exc(self, listing: list[str]) -> pd.DataFrame:
         """
 
         :param listing:
         :return:
         """
 
-        block = self.__get_data(listing=listing)
-        block = block.copy().loc[block['timestamp'] >= self.__as_from, :]
-        block.info()
-        block['date'] = pd.to_datetime(block['timestamp'], unit='ms')
-        block.info()
-        logging.info(block)
+        # The data
+        data = self.__get_data(listing=listing)
+
+        # Filter
+        data = data.copy().loc[data['timestamp'] >= self.__as_from, :]
+
+        # Append a date of the format datetime64[]
+        data['date'] = pd.to_datetime(data['timestamp'], unit='ms')
+
+        return data
