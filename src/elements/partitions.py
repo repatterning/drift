@@ -8,14 +8,10 @@ class Partitions(typing.NamedTuple):
 
     Attributes<br>
     ----------<br>
-    <b>uri</b>: str<br>
-        A uniform resource locator.<br><br>
     <b>catchment_id</b>: int<br>
         The identification code of a catchment area.<br><br>
     <b>ts_id</b>: int<br>
         The identification code of a time series.<br><br>
-    <b>date</b>: datetime.datetime<br>
-        A ...<br><br>
     """
 
     catchment_id: int
