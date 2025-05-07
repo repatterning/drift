@@ -22,8 +22,8 @@ class Interface:
     def __init__(self, listings: pd.DataFrame, arguments: dict):
         """
 
-        :param listings:
-        :param arguments: A set of model development, and supplementary, arguments.
+        :param listings: List of files
+        :param arguments: The arguments.
         """
 
         self.__listings = listings
@@ -55,7 +55,7 @@ class Interface:
         __data = dask.delayed(src.algorithms.data.Data(arguments=self.__arguments).exc)
         __hankel = dask.delayed(src.algorithms.hankel.Hankel(arguments=self.__arguments).exc)
         __metrics = dask.delayed(src.algorithms.metrics.Metrics(arguments=self.__arguments).exc)
-        __persist = dask.delayed(src.algorithms.persist.Persist(reference=reference, arguments=self.__arguments).exc)
+        __persist = dask.delayed(src.algorithms.persist.Persist(arguments=self.__arguments, reference=reference).exc)
 
         # Compute
         computations = []
