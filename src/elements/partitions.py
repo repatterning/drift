@@ -1,6 +1,5 @@
 """Module partitions.py"""
 import typing
-import datetime
 
 
 class Partitions(typing.NamedTuple):
@@ -15,10 +14,10 @@ class Partitions(typing.NamedTuple):
         The identification code of a catchment area.<br><br>
     <b>ts_id</b>: int<br>
         The identification code of a time series.<br><br>
-    <b>date</b>: str<br>
+    <b>date</b>: datetime.datetime<br>
         A ...<br><br>
     """
-    uri: str
+
     catchment_id: int
     ts_id: int
-    date: datetime.datetime
+
