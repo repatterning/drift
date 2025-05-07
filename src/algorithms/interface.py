@@ -19,38 +19,52 @@ class Interface:
     The interface to drift score programs.<br>
     """
 
-    def __init__(self, arguments: dict):
+    def __init__(self, listings: pd.DataFrame, arguments: dict):
         """
 
+        :param listings:
         :param arguments: A set of model development, and supplementary, arguments.
         """
 
+        self.__listings = listings
         self.__arguments = arguments
 
         # Instances
         self.__configurations = config.Config()
 
-    def exc(self, partitions: list[pr.Partitions], listings: pd.DataFrame, reference: pd.DataFrame):
+    @dask.delayed
+    def __get_listing(self, ts_id: int) -> list[str]:
+        """
+
+        :param ts_id:
+        :return:
+        """
+
+        return self.__listings.loc[
+            self.__listings['ts_id'] == ts_id, 'uri'].to_list()
+
+    def exc(self, partitions: list[pr.Partitions], reference: pd.DataFrame):
         """
 
         :param partitions: The time series partitions.
-        :param listings:
         :param reference: The reference sheet of gauges.  Each instance encodes the attributes of a gauge.
         :return:
         """
 
         # Delayed Functions
-        hankel = dask.delayed(src.algorithms.hankel.Hankel(arguments=self.__arguments).exc)
-        metrics = dask.delayed(src.algorithms.metrics.Metrics(arguments=self.__arguments).exc)
-        persist = dask.delayed(src.algorithms.persist.Persist(reference=reference).exc)
+        __data = dask.delayed(src.algorithms.data.Data(arguments=self.__arguments).exc)
+        __hankel = dask.delayed(src.algorithms.hankel.Hankel(arguments=self.__arguments).exc)
+        __metrics = dask.delayed(src.algorithms.metrics.Metrics(arguments=self.__arguments).exc)
+        __persist = dask.delayed(src.algorithms.persist.Persist(reference=reference).exc)
 
         # Compute
         computations = []
-        for partition in partitions:
-            data = ...
-            matrix = hankel(data=data)
-            frame = metrics(matrix=matrix, data=data)
-            message = persist(frame=frame, reference=reference)
+        for partition in partitions[:2]:
+            listing = self.__get_listing(ts_id=partition.ts_id)
+            data = __data(listing=listing)
+            hankel = __hankel(data=data)
+            metrics = __metrics(hankel=hankel, data=data)
+            message = __persist(metrics=metrics, reference=reference)
             computations.append(message)
         messages = dask.compute(computations, scheduler='threads', num_workers=6)[0]
         logging.info('Drift -> \n%s', messages)
