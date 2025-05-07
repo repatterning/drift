@@ -57,7 +57,7 @@ class Partitions:
         if self.__arguments.get('reacquire') | (codes.size == 0):
             data =  self.__data
         else:
-            data = self.__data.copy()[self.__data['ts_id'].isin(codes), :]
+            data = self.__data.copy().loc[self.__data['ts_id'].isin(codes), :]
 
         # Hence, the data sets in focus vis-à-vis the years in focus
         listings = limits.merge(data, how='left', on='date')
