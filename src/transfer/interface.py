@@ -1,6 +1,5 @@
 """Module interface.py"""
 import logging
-import os
 
 import boto3
 import pandas as pd
@@ -9,8 +8,8 @@ import config
 import src.elements.s3_parameters as s3p
 import src.elements.service as sr
 import src.s3.ingress
-import src.transfer.dictionary
 import src.transfer.cloud
+import src.transfer.dictionary
 import src.transfer.metadata
 
 
@@ -67,7 +66,6 @@ class Interface:
         strings = self.__get_metadata(frame=strings.copy())
         logging.info(strings)
 
-        '''
         # Prepare the S3 (Simple Storage Service) section
         src.transfer.cloud.Cloud(
             service=self.__service, s3_parameters=self.__s3_parameters).exc()
@@ -77,4 +75,3 @@ class Interface:
             service=self.__service, bucket_name=self.__s3_parameters.external).exc(
             strings=strings, tagging='project=hydrography')
         logging.info(messages)
-        '''
