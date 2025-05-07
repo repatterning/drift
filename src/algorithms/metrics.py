@@ -90,4 +90,3 @@ class Metrics:
         frame = pd.DataFrame(data={'js': js, 'wasserstein': wasserstein, 'date': dates})
 
         return self.__milliseconds(blob=frame)
-    
