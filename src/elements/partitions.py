@@ -20,4 +20,3 @@ class Partitions(typing.NamedTuple):
 
     catchment_id: int
     ts_id: int
-
