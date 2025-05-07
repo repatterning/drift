@@ -1,4 +1,5 @@
 """Module partitions.py"""
+import typing
 import logging
 import datetime
 import numpy as np
@@ -40,7 +41,7 @@ class Partitions:
 
         return limits
 
-    def exc(self) -> pd.DataFrame:
+    def exc(self) -> typing.Tuple[pd.DataFrame, pd.DataFrame]:
         """
 
         :return:
@@ -53,13 +54,15 @@ class Partitions:
         # If the focus is just one or a few gauges ...
         codes = np.array(self.__arguments.get('excerpt'))
         codes = np.unique(codes)
-
         if self.__arguments.get('reacquire') | (codes.size == 0):
             data =  self.__data
         else:
             data = self.__data.copy()[self.__data['ts_id'].isin(codes), :]
 
         # Hence, the data sets in focus vis-à-vis the years in focus
-        frame = limits.merge(data, how='left', on='date')
+        listings = limits.merge(data, how='left', on='date')
 
-        return frame
+        # ...
+        partitions = listings[['catchment_id', 'ts_id']].drop_duplicates()
+
+        return partitions, listings
