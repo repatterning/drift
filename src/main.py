@@ -17,15 +17,12 @@ def main():
     logger.info('Starting: %s', datetime.datetime.now().isoformat(timespec='microseconds'))
 
     # The time series partitions, the reference sheet of gauges
-    partitions, reference = src.assets.interface.Interface(
+    partitions, listings, reference = src.assets.interface.Interface(
         service=service, s3_parameters=s3_parameters, arguments=arguments).exc()
-    logger.info(partitions)
+    logger.info(partitions[:5])
+    logging.info(listings)
+    logging.info(listings.loc[listings['ts_id'] == partitions[0].ts_id, 'uri'].to_list())
     logger.info(reference)
-
-    # Experiment
-    # src.algorithms.data.Data(
-    #     service=service, s3_parameters=s3_parameters, arguments=arguments).exc(partition=partitions[0])
-
 
     # Cache
     src.functions.cache.Cache().exc()
@@ -43,7 +40,7 @@ if __name__ == '__main__':
                         datefmt='%Y-%m-%d %H:%M:%S')
 
     # Modules
-    import src.algorithms.data
+    
     import src.assets.interface
     import src.elements.s3_parameters as s3p
     import src.elements.service as sr
