@@ -28,3 +28,6 @@ class Config:
 
         # The prefix of the Amazon repository where the quantiles will be stored
         self.prefix = 'warehouse/drift'
+
+        # Data granularity
+        self.granularity = {'h': 'hour', 'd': 'day', 'w': 'week', 'y': 'year'}
