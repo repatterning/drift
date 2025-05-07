@@ -50,19 +50,19 @@ class Persist:
 
         return nodes
 
-    def exc(self, frame: pd.DataFrame, partition: pr.Partitions) -> str:
+    def exc(self, metrics: pd.DataFrame, partition: pr.Partitions) -> str:
         """
 
-        :param frame:
+        :param metrics:
         :param partition:
         :return:
         """
 
         # Ascertain date order
-        # frame.sort_values(by='date', ascending=True, ignore_index=True, inplace=True)
+        # metrics.sort_values(by='date', ascending=True, ignore_index=True, inplace=True)
 
         # Dictionary
-        nodes = self.__get_nodes(frame=frame, ts_id=partition.ts_id)
+        nodes = self.__get_nodes(frame=metrics, ts_id=partition.ts_id)
 
         message = self.__objects.write(
             nodes=nodes, path=os.path.join(self.__configurations.points_, f'{partition.ts_id}.json'))
