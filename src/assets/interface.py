@@ -46,7 +46,7 @@ class Interface:
 
         return [pr.Partitions(**value) for value in values]
 
-    def exc(self) -> typing.Tuple[list[pr.Partitions], pd.DataFrame]:
+    def exc(self) -> typing.Tuple[list[pr.Partitions], pd.DataFrame, pd.DataFrame]:
         """
 
         :return:
@@ -58,8 +58,7 @@ class Interface:
 
         # Strings for data reading.  If self.__arguments.get('reacquire') is False, the partitions will be those
         # of excerpt ...
-        partitions = src.assets.partitions.Partitions(data=gauges, arguments=self.__arguments).exc()
-        logging.info(partitions)
+        partitions, listings = src.assets.partitions.Partitions(data=gauges, arguments=self.__arguments).exc()
 
         # The reference sheet of gauges.  Each instance encodes the attributes of a gauge.
         reference = src.assets.reference.Reference(
@@ -68,4 +67,4 @@ class Interface:
         # Menu: For selecting a gauge's graph of quantiles via the gauge's time series identifier.
         src.assets.menu.Menu().exc(reference=reference)
 
-        return self.__structure(partitions=partitions), reference
+        return self.__structure(partitions=partitions), listings, reference
