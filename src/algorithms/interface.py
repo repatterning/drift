@@ -64,7 +64,7 @@ class Interface:
             data = __data(listing=listing)
             hankel = __hankel(data=data)
             metrics = __metrics(hankel=hankel, data=data)
-            message = __persist(metrics=metrics, reference=reference)
+            message = __persist(metrics=metrics, partition=partition)
             computations.append(message)
         messages = dask.compute(computations, scheduler='threads', num_workers=6)[0]
         logging.info('Drift -> \n%s', messages)
