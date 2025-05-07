@@ -45,15 +45,15 @@ class Metrics:
         return float(sta.wasserstein_distance(penultimate, ultimate))
 
     @staticmethod
-    def __get_matrices(matrix: np.ndarray) -> typing.Tuple[np.ndarray, np.ndarray]:
+    def __get_matrices(hankel: np.ndarray) -> typing.Tuple[np.ndarray, np.ndarray]:
         """
 
-        :param matrix:
+        :param hankel:
         :return:
         """
 
-        penultimate = matrix[1:, :]
-        ultimate = matrix[:-1, :]
+        penultimate = hankel[1:, :]
+        ultimate = hankel[:-1, :]
 
         return np.fliplr(penultimate), np.fliplr(ultimate)
 
@@ -71,16 +71,16 @@ class Metrics:
 
         return frame
 
-    def exc(self, matrix: np.ndarray, data: pd.DataFrame) -> pd.DataFrame:
+    def exc(self, hankel: np.ndarray, data: pd.DataFrame) -> pd.DataFrame:
         """
 
-        :param matrix: Hankel matrix
+        :param hankel: Hankel matrix
         :param data: An institution's data
         :return:
         """
 
         # Matrices
-        penultimate, ultimate = self.__get_matrices(matrix=matrix)
+        penultimate, ultimate = self.__get_matrices(hankel=hankel)
 
         # Scores
         js = self.__get_js(penultimate=penultimate, ultimate=ultimate)
