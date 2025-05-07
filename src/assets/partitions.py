@@ -46,16 +46,20 @@ class Partitions:
         :return:
         """
 
+        # The years in focus, via the year start date, e.g., 2023-01-01
         limits = self.__limits()
-        limits.info()
         logging.info(limits)
 
+        # If the focus is just one or a few gauges ...
         codes = np.array(self.__arguments.get('excerpt'))
         codes = np.unique(codes)
 
         if self.__arguments.get('reacquire') | (codes.size == 0):
-            return self.__data
+            data =  self.__data
+        else:
+            data = self.__data.copy()[self.__data['ts_id'].isin(codes), :]
 
-        frame = self.__data.copy()[self.__data['ts_id'].isin(codes), :]
+        # Hence, the data sets in focus vis-à-vis the years in focus
+        frame = limits.merge(data, how='left', on='date')
 
         return frame
