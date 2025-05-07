@@ -35,10 +35,10 @@ class Partitions:
         ending = datetime.datetime.strptime(f'{_end}-01-01', '%Y-%m-%d')
 
         # Create series
-        frame = pd.date_range(start=starting, end=ending, freq='YS'
+        limits = pd.date_range(start=starting, end=ending, freq='YS'
                               ).to_frame(index=False, name='date')
 
-        return frame
+        return limits
 
     def exc(self) -> pd.DataFrame:
         """
