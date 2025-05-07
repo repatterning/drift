@@ -30,10 +30,11 @@ class Interface:
         # Instances
         self.__configurations = config.Config()
 
-    def exc(self, partitions: list[pr.Partitions], reference: pd.DataFrame):
+    def exc(self, partitions: list[pr.Partitions], listings: pd.DataFrame, reference: pd.DataFrame):
         """
 
         :param partitions: The time series partitions.
+        :param listings:
         :param reference: The reference sheet of gauges.  Each instance encodes the attributes of a gauge.
         :return:
         """
