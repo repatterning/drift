@@ -21,7 +21,7 @@ class Config:
         self.points_ = os.path.join(self.drift_, 'points')
         self.menu_ = os.path.join(self.drift_, 'menu')
 
-        # Template
+        # Keys
         self.s3_parameters_key = 's3_parameters.yaml'
         self.arguments_key = 'drift/arguments.json'
         self.metadata_ = 'drift/external'
