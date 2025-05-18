@@ -57,7 +57,7 @@ class Interface:
 
         # Strings for data reading.  If self.__arguments.get('reacquire') is False, the partitions will be those
         # of excerpt ...
-        partitions, listings = src.assets.partitions.Partitions(data=gauges, arguments=self.__arguments).exc()
+        partitions, listings = src.assets.partitions.Partitions(gauges=gauges, arguments=self.__arguments).exc()
 
         # The reference sheet of gauges.  Each instance encodes the attributes of a gauge.
         reference = src.assets.reference.Reference(
