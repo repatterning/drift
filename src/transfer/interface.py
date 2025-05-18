@@ -51,9 +51,10 @@ class Interface:
 
         return frame
 
-    def exc(self):
+    def exc(self, arguments: dict):
         """
 
+        :param arguments:
         :return:
         """
 
@@ -67,8 +68,9 @@ class Interface:
         logging.info(strings)
 
         # Prepare the S3 (Simple Storage Service) section
-        src.transfer.cloud.Cloud(
-            service=self.__service, s3_parameters=self.__s3_parameters).exc()
+        if arguments.get('excerpt') == 0:
+            src.transfer.cloud.Cloud(
+                service=self.__service, s3_parameters=self.__s3_parameters).exc()
 
         # Transfer
         messages = src.s3.ingress.Ingress(
