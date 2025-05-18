@@ -78,6 +78,6 @@ class Setup:
             listings = self.__pre.objects(prefix=self.__configurations.prefix)
             logging.info(listings)
 
-            return len(listings) <= 1
+            return len(listings) == 0
 
         sys.exit('Error: Set up failure.')

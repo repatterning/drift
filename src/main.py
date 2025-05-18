@@ -19,6 +19,7 @@ def main():
     # The time series partitions, the reference sheet of gauges
     partitions, listings, reference = src.assets.interface.Interface(
         service=service, s3_parameters=s3_parameters, arguments=arguments).exc()
+    logger.info(partitions)
 
     # Calculating drift
     src.algorithms.interface.Interface(listings=listings, arguments=arguments).exc(
@@ -26,7 +27,7 @@ def main():
 
     # Transferring calculations to an Amazon S3 (Simple Storage Service) bucket
     src.transfer.interface.Interface(
-        connector=connector, service=service, s3_parameters=s3_parameters).exc()
+        connector=connector, service=service, s3_parameters=s3_parameters).exc(arguments=arguments)
 
     # Cache
     src.functions.cache.Cache().exc()
