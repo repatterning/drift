@@ -1,10 +1,7 @@
 """Module partitions.py"""
 import datetime
-import logging
-import sys
 import typing
 
-import numpy as np
 import pandas as pd
 
 
@@ -13,14 +10,14 @@ class Partitions:
     Partitions for parallel computation.
     """
 
-    def __init__(self, data: pd.DataFrame, arguments: dict):
+    def __init__(self, gauges: pd.DataFrame, arguments: dict):
         """
 
-        :param data:
+        :param gauges:
         :param arguments:
         """
 
-        self.__data = data
+        self.__gauges = gauges
         self.__arguments = arguments
 
     def __limits(self):
@@ -51,24 +48,10 @@ class Partitions:
 
         # The years in focus, via the year start date, e.g., 2023-01-01
         limits = self.__limits()
-        logging.info('YEARS:\n%s\n', limits)
-
-        # If the focus is just one or a few gauges ...
-        codes = np.array(self.__arguments.get('excerpt'))
-        codes = np.unique(codes)
-        if codes.size == 0:
-            data =  self.__data
-        else:
-            catchments = self.__data.loc[self.__data['ts_id'].isin(codes), 'catchment_id'].unique()
-            data = self.__data.copy().loc[self.__data['catchment_id'].isin(catchments), :]
-
-        # A Status 1 exit
-        if data.shape[0] == 0:
-            sys.exit(f'Available data sources: {self.__data.shape[0]}.  If more than one data source exists, '
-                     f'investigate the excerpt time series codes.\n{codes}')
 
         # Hence, the data sets in focus vis-à-vis the years in focus
-        listings = limits.merge(data, how='left', on='date')
+        listings = limits.merge(self.__gauges.copy(), how='left', on='date')
+        listings = listings.copy().loc[listings['catchment_id'].isin([277149, 277161]), :]
 
         # ...
         partitions = listings[['catchment_id', 'ts_id']].drop_duplicates()
