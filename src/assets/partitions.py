@@ -49,9 +49,8 @@ class Partitions:
         # The years in focus, via the year start date, e.g., 2023-01-01
         limits = self.__limits()
 
-        # Hence, the data sets in focus vis-à-vis the years in focus
+        # Hence -> Testing .loc[listings['catchment_id'].isin([277149, 277161]), :]
         listings = limits.merge(self.__gauges.copy(), how='left', on='date')
-        listings = listings.copy().loc[listings['catchment_id'].isin([277149, 277161]), :]
 
         # ...
         partitions = listings[['catchment_id', 'ts_id']].drop_duplicates()
