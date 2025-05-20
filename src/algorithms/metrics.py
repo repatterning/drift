@@ -20,6 +20,9 @@ class Metrics:
 
         self.__arguments = arguments
 
+        # For indices
+        self.__day = 24
+
     @staticmethod
     def __get_js(penultimate: np.ndarray, ultimate: np.ndarray) -> np.ndarray | float:
         """
@@ -44,16 +47,20 @@ class Metrics:
         # noinspection PyTypeChecker
         return float(sta.wasserstein_distance(penultimate, ultimate))
 
-    @staticmethod
-    def __get_matrices(hankel: np.ndarray) -> typing.Tuple[np.ndarray, np.ndarray]:
+    def __get_matrices(self, hankel: np.ndarray) -> typing.Tuple[np.ndarray, np.ndarray]:
         """
+        penultimate = hankel[1:, :]
+        ultimate = hankel[:-1, :]
 
         :param hankel:
         :return:
         """
 
-        penultimate = hankel[1:, :]
-        ultimate = hankel[:-1, :]
+        stop = hankel.shape[0] - self.__day
+        indices = np.arange(start=0, stop=stop, step=self.__day)
+
+        penultimate = hankel[indices + self.__day, :]
+        ultimate = hankel[indices, :]
 
         return np.fliplr(penultimate), np.fliplr(ultimate)
 
@@ -86,7 +93,7 @@ class Metrics:
         js = self.__get_js(penultimate=penultimate, ultimate=ultimate)
         wasserstein = [self.__get_wasserstein(penultimate[i,:], ultimate[i,:]) for i in np.arange(ultimate.shape[0])]
         dates = pd.date_range(
-            start=data['date'].max(), periods=js.shape[0], freq='-1' + self.__arguments.get('frequency'))
+            start=data['date'].max(), periods=js.shape[0], freq=f'-{self.__day}' + self.__arguments.get('frequency'))
         frame = pd.DataFrame(data={'js': js, 'wasserstein': wasserstein, 'date': dates})
 
         return self.__milliseconds(blob=frame)
