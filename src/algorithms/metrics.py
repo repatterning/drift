@@ -22,6 +22,7 @@ class Metrics:
 
         # For indices
         self.__day = 24
+        self.__period = int(self.__arguments.get('seasons') / self.__day)
 
     @staticmethod
     def __get_js(penultimate: np.ndarray, ultimate: np.ndarray) -> np.ndarray | float:
@@ -47,20 +48,20 @@ class Metrics:
         # noinspection PyTypeChecker
         return float(sta.wasserstein_distance(penultimate, ultimate))
 
-    def __get_matrices(self, hankel: np.ndarray) -> typing.Tuple[np.ndarray, np.ndarray]:
+    def __get_matrices(self, excerpt: np.ndarray) -> typing.Tuple[np.ndarray, np.ndarray]:
         """
-        penultimate = hankel[1:, :]
-        ultimate = hankel[:-1, :]
 
-        :param hankel:
+        :param excerpt:
         :return:
         """
 
-        stop = hankel.shape[0] - self.__day
-        indices = np.arange(start=0, stop=stop, step=self.__day)
+        # Indices
+        stop = excerpt.shape[0] - self.__period
+        indices = np.arange(start=0, stop=stop)
 
-        penultimate = hankel[indices + self.__day, :]
-        ultimate = hankel[indices, :]
+        # Matrices of data ...
+        penultimate = excerpt[indices + self.__period, :]
+        ultimate = excerpt[indices, :]
 
         return np.fliplr(penultimate), np.fliplr(ultimate)
 
@@ -73,7 +74,7 @@ class Metrics:
         """
 
         frame = blob.copy()
-        frame['milliseconds']  = (frame['date'].to_numpy().astype(np.int64) / (10 ** 6)).astype(np.longlong)
+        frame['milliseconds'] = (frame['date'].to_numpy().astype(np.int64) / (10 ** 6)).astype(np.longlong)
         frame.sort_values(by='date', inplace=True)
 
         return frame
@@ -86,8 +87,12 @@ class Metrics:
         :return:
         """
 
+        # Mutually exclusive vis-à-vis day demarcation
+        special = np.arange(start=0, stop=hankel.shape[0], step=self.__day)
+        excerpt = hankel[special,:]
+
         # Matrices
-        penultimate, ultimate = self.__get_matrices(hankel=hankel)
+        penultimate, ultimate = self.__get_matrices(excerpt=excerpt)
 
         # Scores
         js = self.__get_js(penultimate=penultimate, ultimate=ultimate)
