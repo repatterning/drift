@@ -1,5 +1,4 @@
 """Module hankel.py"""
-
 import numpy as np
 import pandas as pd
 import scipy.linalg as li
@@ -29,6 +28,7 @@ class Hankel:
         """
 
         frame = data.copy()
+        frame.sort_values(by='timestamp', ascending=True, inplace=True)
 
         points = frame['measure'].to_numpy()
         reverse = points[::-1]

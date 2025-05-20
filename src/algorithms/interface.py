@@ -63,4 +63,4 @@ class Interface:
             message = __persist(metrics=metrics, partition=partition)
             computations.append(message)
         messages = dask.compute(computations, scheduler='threads', num_workers=8)[0]
-        logging.info('Drift -> \n%s', messages)
+        logging.info('LOGS -> \n%s', messages)
